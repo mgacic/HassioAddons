@@ -15,6 +15,7 @@
     "POSTGRES_USER": "str?",
     "POSTGRES_PASSWORD": "str?",
     "POSTGRES_DB": "str?"
+    ,"pero":"str"
   },
   "environment": {
     "POSTGRES_PASSWORD": "{POSTGRES_PASSWORD|password}",
