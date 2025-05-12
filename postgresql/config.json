@@ -8,14 +8,14 @@
   "options": {
     "POSTGRES_PASSWORD": "homeassistant",
     "POSTGRES_USER": "postgres",
-    "POSTGRES_DB": "postgres"
-    ,"pero": "xxxxx"
+    "POSTGRES_DB": "postgres",
+    "pero": "xxxxx"
   },
   "schema": {
     "POSTGRES_USER": "str?",
     "POSTGRES_PASSWORD": "str?",
-    "POSTGRES_DB": "str?"
-    ,"pero":"str"
+    "POSTGRES_DB": "str?",
+    "pero":"str"
   },
   "environment": {
     "POSTGRES_PASSWORD": "{POSTGRES_PASSWORD|password}",
