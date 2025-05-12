@@ -21,7 +21,7 @@
     "pg_db": "str"
   },
   "ports": {
-    "5432/tcp": 5432
+    "{pg_port}/tcp": 5432
   },
   "arch": ["amd64", "armv7", "aarch64"]
 }
