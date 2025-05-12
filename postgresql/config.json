@@ -1,7 +1,7 @@
 {
   "name": "PostgreSQL",
   "version": "1.0.0",
-  "slug": "postgresql16",
+  "slug": "postgresql",
   "description": "PostgreSQL server for Home Assistant",
   "startup": "services",
   "boot": "auto",
