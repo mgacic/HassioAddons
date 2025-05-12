@@ -8,17 +8,20 @@
   "options": {
     "pg_user": "homeassistant",
     "pg_password": "changeme",
-    "pg_db": "homeassistant"
+    "pg_db": "homeassistant",
+    "pg_port": 5432
   },
   "environment": {
     "POSTGRES_USER": "{pg_user}",
     "POSTGRES_PASSWORD": "{pg_password}",
-    "POSTGRES_DB": "{pg_db}"
+    "POSTGRES_DB": "{pg_db}",
+    "POSTGRES_PORT": "{pg_port}"
   },
   "schema": {
     "pg_user": "str",
     "pg_password": "str",
-    "pg_db": "str"
+    "pg_db": "str",
+    "pg_port": "int"
   },
   "ports": {
     "{pg_port}/tcp": 5432
