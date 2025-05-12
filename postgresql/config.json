@@ -18,6 +18,6 @@
   "ports": {
     "5432/tcp": 5432
   },
-  "image": "docker.io/library/postgres:16"
+  "arch": ["amd64", "armv7", "aarch64"]
 }
 
