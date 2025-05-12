@@ -8,14 +8,17 @@
   "options": {
     "POSTGRES_USER": "homeassistant",
     "POSTGRES_PASSWORD": "homeassistant",
-    "POSTGRES_DB": "homeassistant",
-    "POSTGRES_PORT": 5432
+    "POSTGRES_DB": "homeassistant"
   },
   "schema": {
     "POSTGRES_USER": "str",
     "POSTGRES_PASSWORD": "str",
-    "POSTGRES_DB": "str?",
-    "POSTGRES_PORT": "int?"
+    "POSTGRES_DB": "str"
+  },
+  "environment": {
+    "POSTGRES_USER": "{POSTGRES_USER}",
+    "POSTGRES_PASSWORD": "{POSTGRES_PASSWORD}",
+    "POSTGRES_DB": "{POSTGRES_DB}"
   },
   "ports": {
     "5432/tcp": 5432
