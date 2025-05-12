@@ -9,11 +9,17 @@
     "POSTGRES_PASSWORD": "homeassistant",
     "POSTGRES_USER": "postgres",
     "POSTGRES_DB": "postgres"
+    ,"pero": "xxxxx"
   },
   "schema": {
     "POSTGRES_USER": "str?",
     "POSTGRES_PASSWORD": "str?",
     "POSTGRES_DB": "str?"
+  },
+  "environment": {
+    "POSTGRES_PASSWORD": "{POSTGRES_PASSWORD|password}",
+    "POSTGRES_USER": "{POSTGRES_USER|postgres}",
+    "POSTGRES_DB": "{POSTGRES_DB|postgres}"
   },
   "ports": {
     "5432/tcp": 5432
