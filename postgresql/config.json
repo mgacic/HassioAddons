@@ -6,26 +6,28 @@
   "startup": "services",
   "boot": "auto",
   "options": {
-    "pg_user": "homeassistant",
-    "pg_password": "changeme",
-    "pg_db": "homeassistant",
-    "pg_port": 5432
-  },
-  "environment": {
-    "POSTGRES_USER": "{pg_user}",
-    "POSTGRES_PASSWORD": "{pg_password}",
-    "POSTGRES_DB": "{pg_db}",
-    "POSTGRES_PORT": "{pg_port}"
+    "POSTGRES_USER": "homeassistant",
+    "POSTGRES_PASSWORD": "homeassistant",
+    "POSTGRES_DB": "homeassistant",
+    "POSTGRES_PORT": 5432
   },
   "schema": {
-    "pg_user": "str",
-    "pg_password": "str",
-    "pg_db": "str",
-    "pg_port": "int"
+    "POSTGRES_USER": "str",
+    "POSTGRES_PASSWORD": "str",
+    "POSTGRES_DB": "str?",
+    "POSTGRES_PORT": "int?"
   },
   "ports": {
-    "{pg_port}/tcp": 5432
+    "5432/tcp": 5432
   },
-  "arch": ["amd64", "armv7", "aarch64"]
+  "ports_description": {
+    "5432/tcp": "Postgres"
+  },
+  "arch": ["amd64", "armv7", "aarch64"],
+  "map": [
+    "addon_config:rw",
+    "homeassistant_config:rw",
+    "media:rw"
+  ]
 }
 
