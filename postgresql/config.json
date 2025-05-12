@@ -18,5 +18,6 @@
   "ports": {
     "5432/tcp": 5432
   }
+  "image": "postgres:16"
 }
 
