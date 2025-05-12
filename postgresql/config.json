@@ -10,6 +10,11 @@
     "pg_password": "changeme",
     "pg_db": "homeassistant"
   },
+  "environment": {
+    "POSTGRES_USER": "{pg_user}",
+    "POSTGRES_PASSWORD": "{pg_password}",
+    "POSTGRES_DB": "{pg_db}"
+  },
   "schema": {
     "pg_user": "str",
     "pg_password": "str",
