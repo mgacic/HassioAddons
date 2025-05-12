@@ -6,9 +6,9 @@
   "startup": "services",
   "boot": "auto",
   "options": {
-    "POSTGRES_PASSWORD": "homeassistant"
+    "POSTGRES_PASSWORD": "homeassistant",
     "POSTGRES_USER": "postgres",
-    "POSTGRES_DB": "{postgres"
+    "POSTGRES_DB": "postgres"
   },
   "schema": {
     "POSTGRES_USER": "str?",
