@@ -1,0 +1,10 @@
+{
+  "build_from": {
+    "aarch64": "postgres:17-alpine",
+    "amd64": "postgres:17-alpine",
+    "armv7": "postgres:17-alpine"
+  },
+  "codenotary": {
+    "signer": "mislavg"
+  }
+}
