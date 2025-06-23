@@ -4,7 +4,6 @@
   "slug": "postgresql",
   "description": "PostgreSQL server for Home Assistant",
   "startup": "services",
-  "boot": "auto",
   "options": {
     "POSTGRES_PASSWORD": "homeassistant",
     "POSTGRES_USER": "postgres",
