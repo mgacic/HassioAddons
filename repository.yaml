@@ -1,4 +1,3 @@
-# https://developers.home-assistant.io/docs/add-ons/repository#repository-configuration
 name: Home Assistant add-on repository (by Mislavg)
 url: 'https://github.com/mgacic/HassioAddons'
 maintainer: Mislavg
