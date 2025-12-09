@@ -61,6 +61,7 @@ if [ -f "$PGDATA/PG_VERSION" ] && [ ! -f "$PGDATA/.setup_complete" ]; then
     # Stop background
     kill "$PID"
     wait "$PID"
+    bashio::log.info "Database initialization complete!!!"
 fi
 
 
@@ -74,7 +75,9 @@ CUSTOM_CONF="$PGDATA/postgresql.custom.conf"
 
 # Generic options
 if bashio::config.has_value 'postgres_config'; then
+    bashio::log.info "Parsing postgres_config..."
     bashio::config 'postgres_config' | while read -r config; do
+        bashio::log.info "Found config line: ${config}"
         if [[ -n "${config}" ]]; then
             echo "${config}" >> "$CUSTOM_CONF"
         fi
