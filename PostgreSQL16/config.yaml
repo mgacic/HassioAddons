@@ -16,7 +16,9 @@ options:
   postgres_db: homeassistant
   postgres_user: homeassistant
   postgres_password: password
+  postgres_config: []
 schema:
   postgres_db: str
   postgres_user: str
   postgres_password: password
+  postgres_config: [str]

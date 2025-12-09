@@ -63,5 +63,17 @@ if [ -f "$PGDATA/PG_VERSION" ] && [ ! -f "$PGDATA/.setup_complete" ]; then
     wait "$PID"
 fi
 
+
+# Apply custom configuration
+if bashio::config.has_value 'postgres_config'; then
+    bashio::log.info "Applying custom PostgreSQL configuration..."
+    
+    bashio::config 'postgres_config' | while read -r config; do
+        if [[ -n "${config}" ]]; then
+            echo "${config}" >> "$PGDATA/postgresql.conf"
+        fi
+    done
+fi
+
 bashio::log.info "Starting PostgreSQL..."
 exec su-exec postgres postgres -D "$PGDATA"
