@@ -64,16 +64,28 @@ if [ -f "$PGDATA/PG_VERSION" ] && [ ! -f "$PGDATA/.setup_complete" ]; then
 fi
 
 
+
 # Apply custom configuration
+bashio::log.info "Applying custom PostgreSQL configuration..."
+CUSTOM_CONF="$PGDATA/postgresql.custom.conf"
+
+# Truncate custom conf
+: > "$CUSTOM_CONF"
+
+# Generic options
 if bashio::config.has_value 'postgres_config'; then
-    bashio::log.info "Applying custom PostgreSQL configuration..."
-    
     bashio::config 'postgres_config' | while read -r config; do
         if [[ -n "${config}" ]]; then
-            echo "${config}" >> "$PGDATA/postgresql.conf"
+            echo "${config}" >> "$CUSTOM_CONF"
         fi
     done
 fi
+
+# Include in main conf if not already present
+if ! grep -q "include = 'postgresql.custom.conf'" "$PGDATA/postgresql.conf"; then
+    echo "include = 'postgresql.custom.conf'" >> "$PGDATA/postgresql.conf"
+fi
+
 
 bashio::log.info "Starting PostgreSQL..."
 exec su-exec postgres postgres -D "$PGDATA"
