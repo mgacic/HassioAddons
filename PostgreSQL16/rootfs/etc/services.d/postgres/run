@@ -88,4 +88,5 @@ fi
 
 
 bashio::log.info "Starting PostgreSQL..."
+chown postgres:postgres "$CUSTOM_CONF"
 exec su-exec postgres postgres -D "$PGDATA"
