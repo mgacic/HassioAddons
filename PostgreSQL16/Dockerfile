@@ -11,7 +11,7 @@ RUN apk add --no-cache \
 COPY rootfs /
 
 # Fix permissions
-RUN chmod a+x /etc/services.d/postgres/run /etc/services.d/exporter/run
+RUN chmod a+x /etc/services.d/postgres/run
 
 # Build arguments
 ARG BUILD_ARCH
