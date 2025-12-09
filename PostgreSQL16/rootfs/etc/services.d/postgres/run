@@ -74,30 +74,27 @@ bashio::log.info "Config parameters: $(bashio::config 'postgres_config')"
 # Generic options
 if bashio::config.has_value 'postgres_config'; then
     bashio::log.info "Applying custom PostgreSQL configuration..."
-    bashio::log.info "Change config parameters: $(bashio::config 'postgres_config')"
     
-    bashio::config 'postgres_config' | while read -r config; do
-        if [[ -n "${config}" ]]; then
-            # Split into key and value
-            # We assume config is in "key=value" format
+    CONFIG_TMP=$(mktemp)
+    bashio::config 'postgres_config' > "$CONFIG_TMP"
+    
+    while read -r config; do
+         if [[ -n "${config}" ]]; then
             key=$(echo "${config}" | cut -d '=' -f 1 | xargs)
             value=$(echo "${config}" | cut -d '=' -f 2- | xargs)
             
             if [[ -n "${key}" ]]; then
-                bashio::log.info "Setting ${key} to ${value}"
-                
-                # Check if key exists in config (commented or uncommented)
+                # Check safely
                 if grep -E -q "^#?${key}\s*=" "$PGDATA/postgresql.conf"; then
-                    # Replace existing line
-                    # Use logical separators for sed to avoid clashes with path values
                     sed -i "s|^#\?${key}\s*=.*|${key} = ${value}|" "$PGDATA/postgresql.conf"
                 else
-                    # Append new key
                     echo "${key} = ${value}" >> "$PGDATA/postgresql.conf"
                 fi
             fi
         fi
-    done
+    done < "$CONFIG_TMP"
+    rm -f "$CONFIG_TMP"
+    
     bashio::log.info "Custom PostgreSQL configuration applied."
 fi
 
