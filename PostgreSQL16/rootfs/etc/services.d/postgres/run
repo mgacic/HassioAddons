@@ -70,6 +70,8 @@ fi
 bashio::log.info "Applying custom PostgreSQL configuration..."
 CUSTOM_CONF="$PGDATA/postgresql.custom.conf"
 
+bashio::log.info "Config parameters: $(bashio::config 'postgres_config')"
+
 # Generic options
 if bashio::config.has_value 'postgres_config'; then
     bashio::log.info "Applying custom PostgreSQL configuration..."
