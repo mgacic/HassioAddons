@@ -74,31 +74,19 @@ bashio::log.info "Config parameters: $(bashio::config 'postgres_config')"
 if bashio::config.has_value 'postgres_config'; then
     bashio::log.info "Applying custom PostgreSQL configuration..."
     
-    CONFIG_TMP=$(mktemp)
-    bashio::config 'postgres_config' > "$CONFIG_TMP"
+    # We use the standard postgresql.auto.conf which is automatically included by postgres
+    # and overrides values in postgresql.conf
+    AUTO_CONF="$PGDATA/postgresql.auto.conf"
     
-    while read -r config; do
-         if [[ -n "${config}" ]]; then
-            key=$(echo "${config}" | cut -d '=' -f 1 | xargs)
-            value=$(echo "${config}" | cut -d '=' -f 2- | xargs)
-            bashio::log.info "${key} = ${value}"
-            if [[ -n "${key}" ]]; then
-                # Check safely
-                if grep -E -q "^#?${key}\s*=" "$PGDATA/postgresql.conf"; then
-                    sed -i "s|^#\?${key}\s*=.*|${key} = ${value}|" "$PGDATA/postgresql.conf"
-                else
-                    echo "${key} = ${value}" >> "$PGDATA/postgresql.conf"
-                fi
-            fi
-        fi
-    done < "$CONFIG_TMP"
-    rm -f "$CONFIG_TMP"
+    # Dump directly to the file, replacing content
+    bashio::config 'postgres_config' > "$AUTO_CONF"
     
-    bashio::log.info "Custom PostgreSQL configuration applied."
+    chown postgres:postgres "$AUTO_CONF"
+    bashio::log.info "Custom PostgreSQL configuration applied to postgresql.auto.conf"
 fi
 
 
 bashio::log.info "Starting PostgreSQL..."
 # Ensure permissions are correct after file modification (sed -i might reset to root)
-chown postgres:postgres "$PGDATA/postgresql.conf"
+chown postgres:postgres "$PGDATA/$AUTO_CONF"
 exec su-exec postgres postgres -D "$PGDATA"
