@@ -70,39 +70,34 @@ fi
 bashio::log.info "Applying custom PostgreSQL configuration..."
 CUSTOM_CONF="$PGDATA/postgresql.custom.conf"
 
-# Truncate custom conf
-: > "$CUSTOM_CONF"
-
 # Generic options
 if bashio::config.has_value 'postgres_config'; then
-    bashio::log.info "Parsing postgres_config..."
-    bashio::log.info "$(bashio::config 'postgres_config')"
-    # Print the raw output first to see what we are dealing with
+    bashio::log.info "Applying custom PostgreSQL configuration..."
+    bashio::log.info "Change config parameters: $(bashio::config 'postgres_config')"
+    
     bashio::config 'postgres_config' | while read -r config; do
-        bashio::log.info "DEBUG: Raw config item: '${config}'"
         if [[ -n "${config}" ]]; then
-            echo "${config}" >> "$CUSTOM_CONF"
+            # Split into key and value
+            # We assume config is in "key=value" format
+            key=$(echo "${config}" | cut -d '=' -f 1 | xargs)
+            value=$(echo "${config}" | cut -d '=' -f 2- | xargs)
+            
+            if [[ -n "${key}" ]]; then
+                bashio::log.info "Setting ${key} to ${value}"
+                
+                # Check if key exists in config (commented or uncommented)
+                if grep -E -q "^#?${key}\s*=" "$PGDATA/postgresql.conf"; then
+                    # Replace existing line
+                    # Use logical separators for sed to avoid clashes with path values
+                    sed -i "s|^#\?${key}\s*=.*|${key} = ${value}|" "$PGDATA/postgresql.conf"
+                else
+                    # Append new key
+                    echo "${key} = ${value}" >> "$PGDATA/postgresql.conf"
+                fi
+            fi
         fi
     done
 fi
 
-# Include in main conf if not already present
-if ! grep -q "include = 'postgresql.custom.conf'" "$PGDATA/postgresql.conf"; then
-    echo "include = 'postgresql.custom.conf'" >> "$PGDATA/postgresql.conf"
-fi
-
-
-if ! kill -0 $PID 2>/dev/null; then
-    bashio::log.error "PostgreSQL failed to start immediately!"
-    # Try to see logs if any exist in data directory
-    if [ -f "$PGDATA/log/postgresql.log" ]; then
-        cat "$PGDATA/log/postgresql.log"
-    fi
-    exit 1
-fi
-kill $PID
-wait $PID
-
-bashio::log.info "Starting PostgreSQL (exec)..."
-# chown postgres:postgres "$CUSTOM_CONF" # Doing it again just in case
+bashio::log.info "Starting PostgreSQL..."
 exec su-exec postgres postgres -D "$PGDATA"
