@@ -84,9 +84,9 @@ fi
 #     chown postgres:postgres "$AUTO_CONF"
 #     bashio::log.info "Custom PostgreSQL configuration applied to postgresql.auto.conf"
 # fi
-
+# chown postgres:postgres "$PGDATA/$AUTO_CONF"
 
 bashio::log.info "Starting PostgreSQL..."
 # Ensure permissions are correct after file modification (sed -i might reset to root)
-chown postgres:postgres "$PGDATA/$AUTO_CONF"
+
 exec su-exec postgres postgres -D "$PGDATA"
