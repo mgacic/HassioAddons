@@ -73,7 +73,8 @@ if bashio::config.has_value 'postgres_config'; then
     bashio::log.info "1"
     AUTO_CONF="$PGDATA/postgresql.auto.conf"
     bashio::log.info "2"
-    bashio::config 'postgres_config' > "$AUTO_CONF"
+    CONFIG_CONTENT=$(bashio::config 'postgres_config')
+    echo "$CONFIG_CONTENT" > "$AUTO_CONF"
     bashio::log.info "3"
     chown postgres:postgres "$AUTO_CONF"
     bashio::log.info "4"
