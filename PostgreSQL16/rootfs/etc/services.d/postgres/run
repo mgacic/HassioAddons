@@ -6,6 +6,10 @@ mkdir -p "$PGDATA"
 chown -R postgres:postgres "$PGDATA"
 chmod 0700 "$PGDATA"
 
+# Set up runtime directory
+mkdir -p /run/postgresql
+chown -R postgres:postgres /run/postgresql
+
 # Initialize database if it doesn't exist
 if ! bashio::fs.file_exists "$PGDATA/PG_VERSION"; then
     bashio::log.info "Initializing PostgreSQL database..."
