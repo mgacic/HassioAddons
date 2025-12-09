@@ -72,7 +72,7 @@ bashio::log.info "Config parameters: $(bashio::config 'postgres_config')"
 
 # Generic options
 if bashio::config.has_value 'postgres_config'; then
-    bashio::log.info "Applying custom PostgreSQL configuration..."
+    bashio::log.info "Applying custom PostgreSQL configuration."
     
     # We use the standard postgresql.auto.conf which is automatically included by postgres
     # and overrides values in postgresql.conf
