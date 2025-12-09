@@ -98,6 +98,7 @@ if bashio::config.has_value 'postgres_config'; then
             fi
         fi
     done
+    bashio::log.info "Custom PostgreSQL configuration applied."
 fi
 
 bashio::log.info "Starting PostgreSQL..."
