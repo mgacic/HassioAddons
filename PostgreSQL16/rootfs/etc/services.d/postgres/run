@@ -67,7 +67,6 @@ fi
 
 
 # Apply custom configuration
-CUSTOM_CONF="$PGDATA/postgresql.custom.conf"
 
 bashio::log.info "Config parameters: $(bashio::config 'postgres_config')"
 
@@ -82,7 +81,7 @@ if bashio::config.has_value 'postgres_config'; then
          if [[ -n "${config}" ]]; then
             key=$(echo "${config}" | cut -d '=' -f 1 | xargs)
             value=$(echo "${config}" | cut -d '=' -f 2- | xargs)
-            
+            bashio::log.info "${key} = ${value}"
             if [[ -n "${key}" ]]; then
                 # Check safely
                 if grep -E -q "^#?${key}\s*=" "$PGDATA/postgresql.conf"; then
@@ -98,5 +97,8 @@ if bashio::config.has_value 'postgres_config'; then
     bashio::log.info "Custom PostgreSQL configuration applied."
 fi
 
+
 bashio::log.info "Starting PostgreSQL..."
+# Ensure permissions are correct after file modification (sed -i might reset to root)
+chown postgres:postgres "$PGDATA/postgresql.conf"
 exec su-exec postgres postgres -D "$PGDATA"
