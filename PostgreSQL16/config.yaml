@@ -1,0 +1,25 @@
+name: "PostgreSQL"
+version: "1.0.0"
+slug: "postgresql"
+description: "PostgreSQL database with Prometheus exporter"
+url: "https://github.com/home-assistant/addons"
+arch:
+  - aarch64
+  - amd64
+startup: services
+init: false
+ports:
+  5432/tcp: 5432
+  9187/tcp: 9187
+ports_description:
+  5432/tcp: "PostgreSQL Database"
+  9187/tcp: "Prometheus Metrics"
+options:
+  postgres_db: homeassistant
+  postgres_user: homeassistant
+  postgres_password: password
+schema:
+  postgres_db: str
+  postgres_user: str
+  postgres_password: password
+image: "ghcr.io/home-assistant/{arch}-addon-postgresql"

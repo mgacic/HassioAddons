@@ -1,0 +1,63 @@
+#!/usr/bin/with-contenv bashio
+
+# Set up data directory
+export PGDATA=/data
+mkdir -p "$PGDATA"
+chown -R postgres:postgres "$PGDATA"
+chmod 0700 "$PGDATA"
+
+# Initialize database if it doesn't exist
+if ! bashio::fs.file_exists "$PGDATA/PG_VERSION"; then
+    bashio::log.info "Initializing PostgreSQL database..."
+    su-exec postgres initdb -D "$PGDATA"
+    
+    # Configure access - allow all from local network (S6 container networking)
+    echo "host all all 0.0.0.0/0 md5" >> "$PGDATA/pg_hba.conf"
+    
+    # Listen on all interfaces
+    echo "listen_addresses = '*'" >> "$PGDATA/postgresql.conf"
+fi
+
+# Get config
+DB_USER=$(bashio::config 'postgres_user')
+DB_PASS=$(bashio::config 'postgres_password')
+DB_NAME=$(bashio::config 'postgres_db')
+
+# Start temporary server to create user/db if needed
+# Note: In a real robust script we might do this via a temporary socket or ensure we wait, 
+# but simply running postgres in background first or using single-user mode is options.
+# For simplicity in this add-on run script, we might just start postgres and rely on a post-start hook 
+# or use a `createdb` script. 
+# Better: Start postgres, wait for it, run setup commands, then keep running? 
+# Or just run setup in background if needed?
+
+# Simpler approach: If newly initialized, start in bg, setup, stop.
+if [ -f "$PGDATA/PG_VERSION" ] && [ ! -f "$PGDATA/.setup_complete" ]; then
+    bashio::log.info "Setting up initial user and database..."
+    
+    # Start in background
+    su-exec postgres postgres -D "$PGDATA" &
+    PID=$!
+    
+    # Wait for start
+    until su-exec postgres pg_isready; do
+        sleep 1
+    done
+    
+    # Create User and DB
+    # We use psql to create user
+    bashio::log.info "Creating user ${DB_USER}..."
+    su-exec postgres psql -c "CREATE USER \"${DB_USER}\" WITH PASSWORD '${DB_PASS}';"
+    
+    bashio::log.info "Creating database ${DB_NAME}..."
+    su-exec postgres psql -c "CREATE DATABASE \"${DB_NAME}\" OWNER \"${DB_USER}\";"
+    
+    touch "$PGDATA/.setup_complete"
+    
+    # Stop background
+    kill "$PID"
+    wait "$PID"
+fi
+
+bashio::log.info "Starting PostgreSQL..."
+exec su-exec postgres postgres -D "$PGDATA"

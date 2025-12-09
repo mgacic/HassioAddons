@@ -1,0 +1,13 @@
+services:
+  addon:
+    build:
+      context: .
+      args:
+        BUILD_FROM: ghcr.io/home-assistant/amd64-base:latest
+    ports:
+      - "5432:5432"
+      - "9187:9187"
+    volumes:
+      - ./data:/data
+    environment:
+      - PGDATA=/data
