@@ -5,7 +5,8 @@ FROM $BUILD_FROM
 RUN apk add --no-cache \
     postgresql16 \
     postgresql16-client \
-    prometheus-postgres-exporter
+    prometheus-postgres-exporter \
+    su-exec
 
 # Copy root filesystem
 COPY rootfs /

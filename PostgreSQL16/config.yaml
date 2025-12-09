@@ -22,4 +22,3 @@ schema:
   postgres_db: str
   postgres_user: str
   postgres_password: password
-# image: "ghcr.io/home-assistant/{arch}-addon-postgresql"
