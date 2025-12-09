@@ -66,24 +66,24 @@ fi
 
 
 
-# Apply custom configuration
+# # Apply custom configuration
 
-bashio::log.info "Config parameters: $(bashio::config 'postgres_config')"
+# bashio::log.info "Config parameters: $(bashio::config 'postgres_config')"
 
-# Generic options
-if bashio::config.has_value 'postgres_config'; then
-    bashio::log.info "Applying custom PostgreSQL configuration."
+# # Generic options
+# if bashio::config.has_value 'postgres_config'; then
+#     bashio::log.info "Applying custom PostgreSQL configuration."
     
-    # We use the standard postgresql.auto.conf which is automatically included by postgres
-    # and overrides values in postgresql.conf
-    AUTO_CONF="$PGDATA/postgresql.auto.conf"
+#     # We use the standard postgresql.auto.conf which is automatically included by postgres
+#     # and overrides values in postgresql.conf
+#     AUTO_CONF="$PGDATA/postgresql.auto.conf"
     
-    # Dump directly to the file, replacing content
-    bashio::config 'postgres_config' > "$AUTO_CONF"
+#     # Dump directly to the file, replacing content
+#     bashio::config 'postgres_config' > "$AUTO_CONF"
     
-    chown postgres:postgres "$AUTO_CONF"
-    bashio::log.info "Custom PostgreSQL configuration applied to postgresql.auto.conf"
-fi
+#     chown postgres:postgres "$AUTO_CONF"
+#     bashio::log.info "Custom PostgreSQL configuration applied to postgresql.auto.conf"
+# fi
 
 
 bashio::log.info "Starting PostgreSQL..."
