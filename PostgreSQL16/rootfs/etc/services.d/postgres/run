@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bashio
 
 # Set up data directory
-export PGDATA=/data
+export PGDATA=/data/postgresql
 mkdir -p "$PGDATA"
 chown -R postgres:postgres "$PGDATA"
 chmod 0700 "$PGDATA"
