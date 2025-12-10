@@ -26,9 +26,3 @@ schema:
   n8n_basic_auth_user: str
   n8n_basic_auth_password: str
   n8n_secure_cookie: str
-
-environment:
-  N8N_BASIC_AUTH_ACTIVE: "{{ options.n8n_basic_auth_active }}"
-  N8N_BASIC_AUTH_USER: "{{ options.n8n_basic_auth_user }}"
-  N8N_BASIC_AUTH_PASSWORD: "{{ options.n8n_basic_auth_password }}"
-  N8N_SECURE_COOKIE: "{{ options.n8n_secure_cookie }}"

@@ -17,5 +17,7 @@ else
     export N8N_BASIC_AUTH_ACTIVE=false
 fi
 
+export N8N_SECURE_COOKIE=$(bashio::config 'n8n_secure_cookie')
+
 bashio::log.info "Starting n8n..."
 exec n8n start
