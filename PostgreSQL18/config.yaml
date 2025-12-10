@@ -1,7 +1,7 @@
-name: "PostgreSQL"
+name: "PostgreSQL 18"
 version: "1.0.0"
 slug: "postgresql"
-description: "PostgreSQL database with Prometheus exporter"
+description: "PostgreSQL 18 database"
 url: "https://github.com/mgacic/HassioAddons"
 arch:
   - aarch64
