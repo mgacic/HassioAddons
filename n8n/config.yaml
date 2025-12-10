@@ -9,7 +9,6 @@ arch:
   - amd64
 startup: services
 ingress: true
-webui: "ingress://n8n"
 init: false
 ports:
   5678/tcp: 5678
