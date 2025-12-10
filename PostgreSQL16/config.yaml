@@ -1,5 +1,6 @@
 name: "PostgreSQL 16"
 version: "1.0.0"
+image: "ghcr.io/mgacic/postgresql16-{arch}"
 slug: "postgresql16"
 description: "PostgreSQL 16 database"
 url: "https://github.com/mgacic/HassioAddons/PostgreSQL16"
