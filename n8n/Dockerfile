@@ -17,8 +17,6 @@ RUN apk add --no-cache \
     ghostscript \ 
     openssl-dev
 
-ENV N8N_SECURE_COOKIE=false
-
 # Install n8n
 RUN npm install -g n8n
 
