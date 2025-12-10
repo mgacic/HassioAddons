@@ -14,17 +14,18 @@ ports:
   5678/tcp: 5678
 ports_description:
   5678/tcp: "n8n Web Interface"
+
 options:
-  N8N_BASIC_AUTH_ACTIVE: "true"      
-  N8N_BASIC_AUTH_USER: "admin"
-  N8N_BASIC_AUTH_PASSWORD: "password"
-  N8N_SECURE_COOKIE: "false"         
+  n8n_basic_auth_active: "true"
+  n8n_basic_auth_user: "admin"
+  n8n_basic_auth_password: "password"
+  n8n_secure_cookie: "false"
 
 schema:
-  N8N_BASIC_AUTH_ACTIVE: str
-  N8N_BASIC_AUTH_USER: str
-  N8N_BASIC_AUTH_PASSWORD: str
-  N8N_SECURE_COOKIE: str
+  n8n_basic_auth_active: str
+  n8n_basic_auth_user: str
+  n8n_basic_auth_password: str
+  n8n_secure_cookie: str
 
 environment:
   N8N_BASIC_AUTH_ACTIVE: "{{ options.n8n_basic_auth_active }}"
