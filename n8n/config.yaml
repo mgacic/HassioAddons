@@ -8,7 +8,8 @@ arch:
   - aarch64
   - amd64
 startup: services
-webui: "http://[HOST]:5678/"
+webui:
+  url: "http://[HOST]:5678/"
 init: false
 ports:
   5678/tcp: 5678
@@ -25,7 +26,7 @@ schema:
   n8n_basic_auth_password: str
   n8n_secure_cookie: bool
 environment:
-  - N8N_BASIC_AUTH_ACTIVE={{ options.n8n_basic_auth_active }}
-  - N8N_BASIC_AUTH_USER={{ options.n8n_basic_auth_user }}
-  - N8N_BASIC_AUTH_PASSWORD={{ options.n8n_basic_auth_password }}
-  - N8N_SECURE_COOKIE={{ options.n8n_secure_cookie }}
+  N8N_BASIC_AUTH_ACTIVE: "{{ options.n8n_basic_auth_active }}"
+  N8N_BASIC_AUTH_USER: "{{ options.n8n_basic_auth_user }}"
+  N8N_BASIC_AUTH_PASSWORD: "{{ options.n8n_basic_auth_password }}"
+  N8N_SECURE_COOKIE: "{{ options.n8n_secure_cookie }}"
