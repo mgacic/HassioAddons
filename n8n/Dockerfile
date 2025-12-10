@@ -9,12 +9,12 @@ RUN apk add --no-cache \
     make \
     g++ \
     gcc \
-    build-base \ 
-    python3 \ 
-    py3-pip \ 
-    ffmpeg \ 
-    imagemagick \ 
-    ghostscript \ 
+    build-base \
+    python3 \
+    py3-pip \
+    ffmpeg \
+    imagemagick \
+    ghostscript \
     openssl-dev
 
 # Install n8n
