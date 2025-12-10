@@ -1,7 +1,3 @@
-# Get n8n from official image
-FROM n8nio/n8n:latest as n8n_source
-
-# Build the add-on
 ARG BUILD_FROM
 FROM $BUILD_FROM
 
@@ -10,14 +6,20 @@ RUN apk add --no-cache \
     nodejs \
     npm \
     su-exec \
-    sqlite-libs \
-    python3
+    make \
+    g++ \
+    gcc \
+    build-base \ 
+    python3 \ 
+    py3-pip \ 
+    ffmpeg \ 
+    imagemagick \ 
+    ghostscript \ 
+    openssl-dev
 
-# Copy n8n from official image
-COPY --from=n8n_source /usr/local/lib/node_modules/n8n /usr/lib/node_modules/n8n
 
-# Link n8n
-RUN ln -s /usr/lib/node_modules/n8n/bin/n8n /usr/bin/n8n
+# Install n8n
+RUN npm install -g n8n
 
 # Copy root filesystem
 COPY rootfs /

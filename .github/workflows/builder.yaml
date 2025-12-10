@@ -41,9 +41,7 @@ jobs:
         run: |
           declare -a changed_addons
           for addon in ${{ steps.addons.outputs.addons }}; do
-            if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-              changed_addons+=("\"${addon}\",");
-            elif [[ "${{ steps.changed_files.outputs.all_changed_files }}" =~ $addon ]]; then
+            if [[ "${{ steps.changed_files.outputs.all_changed_files }}" =~ $addon ]]; then
               for file in ${{ env.MONITORED_FILES }}; do
                   if [[ "${{ steps.changed_files.outputs.all_changed_files }}" =~ $addon/$file ]]; then
                     if [[ ! "${changed_addons[@]}" =~ $addon ]]; then
@@ -71,7 +69,7 @@ jobs:
     strategy:
       matrix:
         addon: ${{ fromJson(needs.init.outputs.changed_addons) }}
-        arch: ["aarch64", "amd64", "armhf", "armv7", "i386"]
+        arch: ["aarch64", "amd64"]
 
     steps:
       - name: Check out repository
