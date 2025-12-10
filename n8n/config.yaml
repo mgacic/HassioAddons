@@ -3,7 +3,7 @@ version: "1.0.0"
 slug: "n8n"
 description: "n8n Workflow Automation Tool"
 url: "https://github.com/mgacic/HassioAddons/n8n"
-image: "ghcr.io/mgacic/n8n-{arch}"
+# image: "ghcr.io/mgacic/n8n-{arch}"
 arch:
   - aarch64
   - amd64
