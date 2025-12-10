@@ -1,0 +1,21 @@
+#!/usr/bin/with-contenv bashio
+
+# Set up data directory
+export N8N_USER_FOLDER=/data/n8n
+mkdir -p "$N8N_USER_FOLDER"
+
+# Network settings
+export N8N_PORT=5678
+export N8N_HOST=0.0.0.0
+
+# Authentication
+if bashio::config.true 'n8n_basic_auth_active'; then
+    export N8N_BASIC_AUTH_ACTIVE=true
+    export N8N_BASIC_AUTH_USER=$(bashio::config 'n8n_basic_auth_user')
+    export N8N_BASIC_AUTH_PASSWORD=$(bashio::config 'n8n_basic_auth_password')
+else
+    export N8N_BASIC_AUTH_ACTIVE=false
+fi
+
+bashio::log.info "Starting n8n..."
+exec n8n start
