@@ -5,10 +5,13 @@ FROM $BUILD_FROM
 RUN apk add --no-cache \
     nodejs \
     npm \
-    su-exec
+    su-exec \
+    python3 \
+    make \
+    g++
 
 # Install n8n
-RUN npm install -g n8n
+RUN npm install -g n8n --omit=dev --unsafe-perm
 
 # Copy root filesystem
 COPY rootfs /
