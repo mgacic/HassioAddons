@@ -1,0 +1,69 @@
+#!/usr/bin/with-contenv bashio
+
+# Set up data directory
+export PGDATA=/data/postgresql
+mkdir -p "$PGDATA"
+chown -R postgres:postgres "$PGDATA"
+chmod 0700 "$PGDATA"
+
+# Set up runtime directory
+mkdir -p /run/postgresql
+chown -R postgres:postgres /run/postgresql
+
+# Initialize database if it doesn't exist
+if ! bashio::fs.file_exists "$PGDATA/PG_VERSION"; then
+    bashio::log.info "Initializing PostgreSQL database..."
+    su-exec postgres initdb -D "$PGDATA"
+    
+    # Configure access - allow all from local network (S6 container networking)
+    echo "host all all 0.0.0.0/0 md5" >> "$PGDATA/pg_hba.conf"
+    
+    # Listen on all interfaces
+    echo "listen_addresses = '*'" >> "$PGDATA/postgresql.conf"
+fi
+
+# Get config
+DB_USER=$(bashio::config 'postgres_user')
+DB_PASS=$(bashio::config 'postgres_password')
+DB_NAME=$(bashio::config 'postgres_db')
+CONFIG_CONTENT=$(bashio::config 'postgres_config')
+
+if [ -f "$PGDATA/PG_VERSION" ] && [ ! -f "$PGDATA/.setup_complete" ]; then
+    bashio::log.info "Setting up initial user and database..."
+    
+    # Start in background
+    su-exec postgres postgres -D "$PGDATA" &
+    PID=$!
+    
+    # Wait for start
+    until su-exec postgres pg_isready; do
+        sleep 1
+    done
+    
+    # Create User and DB
+    bashio::log.info "Creating user ${DB_USER}..."
+    su-exec postgres psql -c "CREATE USER \"${DB_USER}\" WITH PASSWORD '${DB_PASS}';"
+    
+    bashio::log.info "Creating database ${DB_NAME}..."
+    su-exec postgres psql -c "CREATE DATABASE \"${DB_NAME}\" OWNER \"${DB_USER}\";"
+    
+    touch "$PGDATA/.setup_complete"
+    
+    # Stop background
+    kill "$PID"
+    wait "$PID"
+    bashio::log.info "Database initialization complete!!!"
+fi
+
+# Apply custom configuration
+if [ -n "$CONFIG_CONTENT" ]; then
+    bashio::log.info "Applying custom PostgreSQL configuration."
+    bashio::log.info "Config parameters: $(bashio::config 'postgres_config')"
+    AUTO_CONF="$PGDATA/postgresql.auto.conf"
+    
+    echo "$CONFIG_CONTENT" > "$AUTO_CONF"
+    chown postgres:postgres "$AUTO_CONF"
+fi
+
+bashio::log.info "Starting PostgreSQL..."
+exec su-exec postgres postgres -D "$PGDATA"

@@ -1,0 +1,26 @@
+name: "PostgreSQL"
+version: "1.0.0"
+slug: "postgresql"
+description: "PostgreSQL database with Prometheus exporter"
+url: "https://github.com/mgacic/HassioAddons"
+arch:
+  - aarch64
+  - amd64
+startup: services
+init: false
+ports:
+  5432/tcp: 5432
+ports_description:
+  5432/tcp: "PostgreSQL Database"
+options:
+  postgres_db: homeassistant
+  postgres_user: homeassistant
+  postgres_password: password
+  postgres_config:
+    - "max_connections=100"
+    - "shared_buffers=128MB"
+schema:
+  postgres_db: str
+  postgres_user: str
+  postgres_password: password
+  postgres_config: [str]
