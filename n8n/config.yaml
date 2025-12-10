@@ -8,8 +8,7 @@ arch:
   - aarch64
   - amd64
 startup: services
-webui:
-  url: "http://[HOST]:5678/"
+webui: "http://[HOST]:5678"
 init: false
 ports:
   5678/tcp: 5678
