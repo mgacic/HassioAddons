@@ -1,8 +1,8 @@
 name: "PostgreSQL 16"
 version: "1.0.0"
-slug: "postgresql16"
+slug: "postgresql"
 description: "PostgreSQL 16 database"
-url: "https://github.com/mgacic/HassioAddons"
+url: "https://github.com/mgacic/HassioAddons/PostgreSQL16"
 arch:
   - aarch64
   - amd64
