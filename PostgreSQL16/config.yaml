@@ -15,7 +15,7 @@ ports_description:
   5432/tcp: "PostgreSQL Database"
 options:
   postgres_db:
-    - homeassistant
+    - "homeassistant"
   postgres_user: homeassistant
   postgres_password: password
   postgres_config:
