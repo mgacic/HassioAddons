@@ -23,9 +23,21 @@ options:
   n8n_basic_auth_user: "admin"
   n8n_basic_auth_password: "password"
   n8n_secure_cookie: "false"
+  db_type: "sqlite"
+  db_postgresdb_host: "core-postgresql16"
+  db_postgresdb_port: 5432
+  db_postgresdb_database: "n8n"
+  db_postgresdb_user: "n8n"
+  db_postgresdb_password: ""
 
 schema:
   n8n_basic_auth_active: str
   n8n_basic_auth_user: str
   n8n_basic_auth_password: str
   n8n_secure_cookie: str
+  db_type: list(sqlite|postgresdb)
+  db_postgresdb_host: str
+  db_postgresdb_port: port
+  db_postgresdb_database: str
+  db_postgresdb_user: str
+  db_postgresdb_password: password
