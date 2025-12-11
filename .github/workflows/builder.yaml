@@ -115,8 +115,6 @@ jobs:
       - name: Install cosign
         if: steps.check.outputs.build_arch == 'true'
         uses: sigstore/cosign-installer@main
-        with:
-          cosign-release: 'latest'
 
       - name: Build ${{ matrix.addon }} add-on
         if: steps.check.outputs.build_arch == 'true'
