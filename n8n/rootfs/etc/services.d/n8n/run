@@ -7,6 +7,9 @@ mkdir -p "$N8N_USER_FOLDER"
 # Network settings
 export N8N_PORT=5678
 export N8N_HOST=0.0.0.0
+export N8N_SECURE_COOKIE=$(bashio::config 'n8n_secure_cookie')
+export N8N_EDITOR_BASE_URL="$(bashio::addon.ingress_url)"
+export N8N_PUBLIC_URL="$(bashio::addon.ingress_url)"
 
 # Authentication
 if bashio::config.true 'n8n_basic_auth_active'; then
@@ -16,8 +19,6 @@ if bashio::config.true 'n8n_basic_auth_active'; then
 else
     export N8N_BASIC_AUTH_ACTIVE=false
 fi
-
-export N8N_SECURE_COOKIE=$(bashio::config 'n8n_secure_cookie')
 
 bashio::log.info "Starting n8n..."
 exec n8n start
