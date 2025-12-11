@@ -11,12 +11,12 @@ ingress: true
 ingress_port: 5678
 ingress_stream: true
 init: false
-ports:
-  5678/tcp: 5678
-  8081/tcp: 8081
-ports_description:
-  5678/tcp: "n8n Web Interface"
-  8081/tcp: "n8n webhook and API"
+# ports:
+#   5678/tcp: 5678
+#   8081/tcp: 8081
+# ports_description:
+#   5678/tcp: "n8n Web Interface"
+#   8081/tcp: "n8n webhook and API"
 
 options:
   n8n_basic_auth_active: "true"
