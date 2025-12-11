@@ -25,11 +25,10 @@ fi
 # Get config
 DB_USER=$(bashio::config 'postgres_user')
 DB_PASS=$(bashio::config 'postgres_password')
-DB_NAME=$(bashio::config 'postgres_db')
 CONFIG_CONTENT=$(bashio::config 'postgres_config')
 
 if [ -f "$PGDATA/PG_VERSION" ] && [ ! -f "$PGDATA/.setup_complete" ]; then
-    bashio::log.info "Setting up initial user and database..."
+    bashio::log.info "Setting up initial user and database(s)..."
     
     # Start in background
     su-exec postgres postgres -D "$PGDATA" &
@@ -40,19 +39,28 @@ if [ -f "$PGDATA/PG_VERSION" ] && [ ! -f "$PGDATA/.setup_complete" ]; then
         sleep 1
     done
     
-    # Create User and DB
+    # Create User
     bashio::log.info "Creating user ${DB_USER}..."
     su-exec postgres psql -c "CREATE USER \"${DB_USER}\" WITH PASSWORD '${DB_PASS}';"
     
-    bashio::log.info "Creating database ${DB_NAME}..."
-    su-exec postgres psql -c "CREATE DATABASE \"${DB_NAME}\" OWNER \"${DB_USER}\";"
+    # Create all databases from the list
+    bashio::log.info "Creating databases..."
+    for db in $(bashio::config 'postgres_db'); do
+        # Check if database already exists
+        if su-exec postgres psql -lqt | cut -d \| -f 1 | grep -qw "$db"; then
+            bashio::log.info "Database ${db} already exists, skipping..."
+        else
+            bashio::log.info "Creating database ${db}..."
+            su-exec postgres psql -c "CREATE DATABASE \"${db}\" OWNER \"${DB_USER}\";"
+        fi
+    done
     
     touch "$PGDATA/.setup_complete"
     
     # Stop background
     kill "$PID"
     wait "$PID"
-    bashio::log.info "Database initialization complete!!!"
+    bashio::log.info "Database initialization complete!"
 fi
 
 # Apply custom configuration
