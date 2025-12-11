@@ -9,7 +9,7 @@ arch:
   - amd64
 startup: services
 ingress: true
-ingres_port: 5678
+ingress_port: 5678
 init: false
 ports:
   5678/tcp: 5678
