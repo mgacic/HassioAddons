@@ -1,23 +1,25 @@
 #!/usr/bin/with-contenv bashio
 
 # Set up data directory
-export N8N_USER_FOLDER=/data/n8n
+export N8N_USER_FOLDER="/data/n8n"
 mkdir -p "$N8N_USER_FOLDER"
 
 # Network settings
-export N8N_PORT=5678
-export N8N_HOST=0.0.0.0
-export N8N_SECURE_COOKIE=$(bashio::config 'n8n_secure_cookie')
+export N8N_PORT="5678"
+export N8N_HOST="0.0.0.0"
+export N8N_SECURE_COOKIE="$(bashio::config 'n8n_secure_cookie')"
 export N8N_EDITOR_BASE_URL="$(bashio::addon.ingress_url)"
 export N8N_PUBLIC_URL="$(bashio::addon.ingress_url)"
+export N8N_DIAGNOSTICS_ENABLED=false
+export N8N_PERSONALIZATION_ENABLED=false
 
 # Authentication
 if bashio::config.true 'n8n_basic_auth_active'; then
-    export N8N_BASIC_AUTH_ACTIVE=true
-    export N8N_BASIC_AUTH_USER=$(bashio::config 'n8n_basic_auth_user')
-    export N8N_BASIC_AUTH_PASSWORD=$(bashio::config 'n8n_basic_auth_password')
+    export N8N_BASIC_AUTH_ACTIVE="true"
+    export N8N_BASIC_AUTH_USER="$(bashio::config 'n8n_basic_auth_user')"
+    export N8N_BASIC_AUTH_PASSWORD="$(bashio::config 'n8n_basic_auth_password')"
 else
-    export N8N_BASIC_AUTH_ACTIVE=false
+    export N8N_BASIC_AUTH_ACTIVE="false"
 fi
 
 bashio::log.info "Starting n8n..."
