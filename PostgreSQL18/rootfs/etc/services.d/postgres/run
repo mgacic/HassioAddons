@@ -27,43 +27,16 @@ DB_USER=$(bashio::config 'postgres_user')
 DB_PASS=$(bashio::config 'postgres_password')
 CONFIG_CONTENT=$(bashio::config 'postgres_config')
 
-# Initial setup - create user
-if [ -f "$PGDATA/PG_VERSION" ] && [ ! -f "$PGDATA/.setup_complete" ]; then
-    bashio::log.info "Setting up initial user..."
-    
-    # Start in background
-    su-exec postgres postgres -D "$PGDATA" &
-    PID=$!
-    
-    # Wait for start
-    until su-exec postgres pg_isready; do
-        sleep 1
-    done
-    
-    # Create User
-    bashio::log.info "Creating user ${DB_USER}..."
-    su-exec postgres psql -c "CREATE USER \"${DB_USER}\" WITH PASSWORD '${DB_PASS}';"
-    
-    touch "$PGDATA/.setup_complete"
-    
-    # Stop background
-    kill "$PID"
-    wait "$PID"
-    bashio::log.info "User initialization complete!"
-fi
-
-# Apply custom configuration
+# Apply custom configuration before starting
 if [ -n "$CONFIG_CONTENT" ]; then
     bashio::log.info "Applying custom PostgreSQL configuration."
-    bashio::log.info "Config parameters: $(bashio::config 'postgres_config')"
     AUTO_CONF="$PGDATA/postgresql.auto.conf"
-    
     echo "$CONFIG_CONTENT" > "$AUTO_CONF"
     chown postgres:postgres "$AUTO_CONF"
 fi
 
+# Start PostgreSQL
 bashio::log.info "Starting PostgreSQL..."
-# Start PostgreSQL in background to create databases
 su-exec postgres postgres -D "$PGDATA" &
 PG_PID=$!
 
@@ -72,10 +45,17 @@ until su-exec postgres pg_isready; do
     sleep 1
 done
 
-# Create/verify databases on every startup
+# Create user if it doesn't exist
+if ! su-exec postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='${DB_USER}'" | grep -q 1; then
+    bashio::log.info "Creating user ${DB_USER}..."
+    su-exec postgres psql -c "CREATE USER \"${DB_USER}\" WITH PASSWORD '${DB_PASS}';"
+else
+    bashio::log.info "User ${DB_USER} already exists."
+fi
+
+# Create/verify databases
 bashio::log.info "Checking databases..."
 for db in $(bashio::config 'postgres_db'); do
-    # Check if database already exists
     if su-exec postgres psql -lqt | cut -d \| -f 1 | grep -qw "$db"; then
         bashio::log.info "Database ${db} exists."
     else
@@ -84,9 +64,7 @@ for db in $(bashio::config 'postgres_db'); do
     fi
 done
 
-# Stop background PostgreSQL
-kill "$PG_PID"
-wait "$PG_PID"
+bashio::log.info "PostgreSQL is ready!"
 
-bashio::log.info "Starting PostgreSQL (final)..."
-exec su-exec postgres postgres -D "$PGDATA"
+# Wait for PostgreSQL process
+wait "$PG_PID"
