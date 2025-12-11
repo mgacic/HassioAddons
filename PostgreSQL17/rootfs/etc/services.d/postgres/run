@@ -48,7 +48,7 @@ done
 # Create user if it doesn't exist
 if ! su-exec postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='${DB_USER}'" | grep -q 1; then
     bashio::log.info "Creating user ${DB_USER}..."
-    su-exec postgres psql -c "CREATE USER \"${DB_USER}\" WITH PASSWORD '${DB_PASS}';"
+    su-exec postgres psql -c "CREATE USER \"${DB_USER}\" WITH PASSWORD '${DB_PASS}';" || true
 else
     bashio::log.info "User ${DB_USER} already exists."
 fi
@@ -56,11 +56,11 @@ fi
 # Create/verify databases
 bashio::log.info "Checking databases..."
 for db in $(bashio::config 'postgres_db'); do
-    if su-exec postgres psql -lqt | cut -d \| -f 1 | grep -qw "$db"; then
+    if su-exec postgres psql -lqt | cut -d \| -f 1 | tr -d ' ' | grep -qx "$db"; then
         bashio::log.info "Database ${db} exists."
     else
         bashio::log.info "Creating database ${db}..."
-        su-exec postgres psql -c "CREATE DATABASE \"${db}\" OWNER \"${DB_USER}\";"
+        su-exec postgres psql -c "CREATE DATABASE \"${db}\" OWNER \"${DB_USER}\";" || bashio::log.warning "Failed to create database ${db}"
     fi
 done
 
