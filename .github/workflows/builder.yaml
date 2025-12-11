@@ -112,6 +112,12 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Install cosign
+        if: steps.check.outputs.build_arch == 'true'
+        uses: sigstore/cosign-installer@main
+        with:
+          cosign-release: 'latest'
+
       - name: Build ${{ matrix.addon }} add-on
         if: steps.check.outputs.build_arch == 'true'
         uses: home-assistant/builder@master
