@@ -9,11 +9,19 @@ A simple and lightweight PostgreSQL 16 database add-on for Home Assistant.
 **Note**: The default username is `homeassistant` and the default database is `homeassistant`.
 
 ### Option: `postgres_db`
-The name of the database to create.
-- **Default**: `homeassistant`
+A list of database names to create. The add-on will automatically create any databases that don't exist on startup.
+- **Default**: `["homeassistant"]`
+
+**Example**:
+```yaml
+postgres_db:
+  - "homeassistant"
+  - "n8n"
+  - "myapp"
+```
 
 ### Option: `postgres_user`
-The username for the database user.
+The username for the database user. This user will be the owner of all databases.
 - **Default**: `homeassistant`
 
 ### Option: `postgres_password`
