@@ -40,17 +40,26 @@ jobs:
         id: changed_addons
         run: |
           declare -a changed_addons
-          for addon in ${{ steps.addons.outputs.addons }}; do
-            if [[ "${{ steps.changed_files.outputs.all_changed_files }}" =~ $addon ]]; then
-              for file in ${{ env.MONITORED_FILES }}; do
-                  if [[ "${{ steps.changed_files.outputs.all_changed_files }}" =~ $addon/$file ]]; then
-                    if [[ ! "${changed_addons[@]}" =~ $addon ]]; then
-                      changed_addons+=("\"${addon}\",");
+          
+          # On manual trigger, build all add-ons
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            for addon in ${{ steps.addons.outputs.addons }}; do
+              changed_addons+=("\"${addon}\",");
+            done
+          else
+            # On push/PR, only build changed add-ons
+            for addon in ${{ steps.addons.outputs.addons }}; do
+              if [[ "${{ steps.changed_files.outputs.all_changed_files }}" =~ $addon ]]; then
+                for file in ${{ env.MONITORED_FILES }}; do
+                    if [[ "${{ steps.changed_files.outputs.all_changed_files }}" =~ $addon/$file ]]; then
+                      if [[ ! "${changed_addons[@]}" =~ $addon ]]; then
+                        changed_addons+=("\"${addon}\",");
+                      fi
                     fi
-                  fi
-              done
-            fi
-          done
+                done
+              fi
+            done
+          fi
 
           changed=$(echo ${changed_addons[@]} | rev | cut -c 2- | rev)
 
