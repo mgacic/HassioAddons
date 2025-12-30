@@ -1,0 +1,25 @@
+name: "Loki"
+version: "0.0.1"
+slug: "loki"
+description: "Loki is a horizontally scalable, highly available, multi-tenant log aggregation system inspired by Prometheus."
+url: "https://grafana.com/oss/loki/"
+image: "ghcr.io/mgacic/loki-{arch}"
+arch:
+  - aarch64
+  - amd64
+startup: services
+init: false
+ports:
+  3100/tcp: 3100
+  9096/tcp: 9096
+ports_description:
+  3100/tcp: "Loki HTTP API"
+  9096/tcp: "Loki gRPC"
+options:
+  log_level: info
+  http_listen_port: 3100
+  grpc_listen_port: 9096
+schema:
+  log_level: list(debug|info|warn|error)
+  http_listen_port: port
+  grpc_listen_port: port

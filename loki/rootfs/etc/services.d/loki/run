@@ -1,0 +1,26 @@
+#!/usr/bin/with-contenv bashio
+
+# Set up data directory
+LOKI_DATA=/data/loki
+if ! bashio::fs.directory_exists "$LOKI_DATA"; then
+    bashio::log.info "Creating Loki data directory..."
+    mkdir -p "$LOKI_DATA"
+    mkdir -p "$LOKI_DATA/chunks"
+    mkdir -p "$LOKI_DATA/rules"
+fi
+
+# Get options
+LOG_LEVEL=$(bashio::config 'log_level')
+HTTP_PORT=$(bashio::config 'http_listen_port')
+GRPC_PORT=$(bashio::config 'grpc_listen_port')
+
+bashio::log.info "Configuring Loki ports..."
+sed -i "s/http_listen_port:.*/http_listen_port: $HTTP_PORT/" /etc/loki/local-config.yaml
+sed -i "s/grpc_listen_port:.*/grpc_listen_port: $GRPC_PORT/" /etc/loki/local-config.yaml
+
+bashio::log.info "Starting Loki..."
+
+# Start Loki
+exec loki \
+    -config.file=/etc/loki/local-config.yaml \
+    -log.level="$LOG_LEVEL"
