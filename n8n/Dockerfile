@@ -1,5 +1,5 @@
-ARG BUILD_FROM
-FROM $BUILD_FROM
+ARG BUILD_FROM=ghcr.io/home-assistant/base:latest
+FROM ${BUILD_FROM}
 
 # Install Node.js and dependencies
 RUN apk add --no-cache \
@@ -26,11 +26,9 @@ COPY rootfs /
 # Fix permissions
 RUN chmod a+x /etc/services.d/n8n/run
 
-# Build arguments
-ARG BUILD_ARCH
-ARG BUILD_DATE
-ARG BUILD_DESCRIPTION
-ARG BUILD_NAME
-ARG BUILD_REF
-ARG BUILD_REPOSITORY
-ARG BUILD_VERSION
+# Labels
+LABEL \
+    org.opencontainers.image.title="n8n" \
+    org.opencontainers.image.description="n8n Workflow Automation Tool" \
+    org.opencontainers.image.source="https://github.com/mgacic/HassioAddons" \
+    org.opencontainers.image.licenses="MIT"
