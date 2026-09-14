@@ -1,5 +1,5 @@
 name: "PostgreSQL 17"
-version: "1.0.0"
+version: "1.0.1"
 slug: "postgresql17"
 description: "PostgreSQL 17 database"
 url: "https://github.com/mgacic/HassioAddons/PostgreSQL17"
