@@ -1,7 +1,7 @@
 ARG INFLUXDB_IMAGE=influxdb:3-core
-FROM ${INFLUXDB_IMAGE} AS influxdb-source
-
 ARG BUILD_FROM=ghcr.io/home-assistant/base-debian:latest
+
+FROM ${INFLUXDB_IMAGE} AS influxdb-source
 FROM ${BUILD_FROM}
 
 # Install runtime dependencies
