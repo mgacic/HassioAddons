@@ -90,6 +90,7 @@ jobs:
             io.hass.name=${{ needs.prepare.outputs.name }}
             io.hass.description=${{ needs.prepare.outputs.description }}
             ${{ needs.prepare.outputs.url && format('io.hass.url={0}', needs.prepare.outputs.url) || '' }}
+          cosign: ${{ inputs.publish }}
           push: ${{ inputs.publish }}
           version: ${{ needs.prepare.outputs.version }}
 
