@@ -1,0 +1,82 @@
+#!/usr/bin/with-contenv bashio
+
+# Set up data directories
+DATA_DIR=/data/influxdb3
+mkdir -p "$DATA_DIR/data" "$DATA_DIR/plugins"
+chown -R influxdb3:influxdb3 "$DATA_DIR"
+chmod 0700 "$DATA_DIR"
+
+# Get configuration options
+ADMIN_TOKEN=$(bashio::config 'admin_token')
+NODE_ID=$(bashio::config 'node_id')
+LOG_FILTER=$(bashio::config 'log_filter')
+
+# Set up admin token file
+TOKEN_FILE="$DATA_DIR/admin-token.json"
+if ! bashio::fs.file_exists "$TOKEN_FILE"; then
+    bashio::log.info "Initializing admin token..."
+    if [ -n "$ADMIN_TOKEN" ]; then
+        cat <<EOF > "$TOKEN_FILE"
+{
+  "token": "${ADMIN_TOKEN}",
+  "name": "admin"
+}
+EOF
+    else
+        gosu influxdb3 influxdb3 create token --admin --name "admin" --offline --output-file "$TOKEN_FILE"
+    fi
+    chown influxdb3:influxdb3 "$TOKEN_FILE"
+    chmod 0600 "$TOKEN_FILE"
+else
+    CURRENT_TOKEN=$(jq -r '.token // empty' "$TOKEN_FILE" 2>/dev/null || true)
+    if [ -n "$ADMIN_TOKEN" ] && [ "$ADMIN_TOKEN" != "$CURRENT_TOKEN" ]; then
+        bashio::log.info "Updating admin token file with configured token..."
+        cat <<EOF > "$TOKEN_FILE"
+{
+  "token": "${ADMIN_TOKEN}",
+  "name": "admin"
+}
+EOF
+        chown influxdb3:influxdb3 "$TOKEN_FILE"
+        chmod 0600 "$TOKEN_FILE"
+    fi
+fi
+
+TOKEN=$(jq -r '.token' "$TOKEN_FILE")
+export INFLUXDB3_AUTH_TOKEN="$TOKEN"
+export INFLUXDB3_HOST_URL="http://127.0.0.1:8181"
+
+# Start InfluxDB 3
+bashio::log.info "Starting InfluxDB 3..."
+gosu influxdb3 influxdb3 serve \
+    --node-id="$NODE_ID" \
+    --object-store=file \
+    --data-dir="$DATA_DIR/data" \
+    --plugin-dir="$DATA_DIR/plugins" \
+    --admin-token-file="$TOKEN_FILE" \
+    --log-filter="$LOG_FILTER" \
+    --http-bind="0.0.0.0:8181" &
+INFLUX_PID=$!
+
+# Wait for InfluxDB 3 to be ready
+until curl -s -f http://127.0.0.1:8181/health >/dev/null 2>&1 || curl -s -f http://127.0.0.1:8181/ping >/dev/null 2>&1; do
+    sleep 1
+done
+
+# Create/verify databases
+bashio::log.info "Checking databases..."
+EXISTING_DBS=$(gosu influxdb3 influxdb3 show databases --format json 2>/dev/null || echo "[]")
+
+for db in $(bashio::config 'databases'); do
+    if echo "$EXISTING_DBS" | grep -q "\"$db\""; then
+        bashio::log.info "Database ${db} exists."
+    else
+        bashio::log.info "Creating database ${db}..."
+        gosu influxdb3 influxdb3 create database "$db" || bashio::log.warning "Failed to create database ${db}"
+    fi
+done
+
+bashio::log.info "InfluxDB 3 is ready!"
+
+# Wait for process
+wait "$INFLUX_PID"
