@@ -11,6 +11,16 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      publish:
+        description: "Publish images to GHCR"
+        type: boolean
+        default: true
+      app:
+        description: "Specific add-on to build (leave empty for all)"
+        type: string
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -42,8 +52,11 @@ jobs:
         run: |
           changed_apps=()
 
-          # On manual trigger or if workflow files changed, build all apps
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" || "${CHANGED_FILES}" =~ \.github/workflows/(builder|build-app)\.yaml ]]; then
+          # If specific app is provided on manual trigger:
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ inputs.app }}" ]]; then
+            changed_apps=("${{ inputs.app }}")
+          # On general manual trigger or if workflow files changed, build all apps:
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" || "${CHANGED_FILES}" =~ \.github/workflows/(builder|build-app)\.yaml ]]; then
             changed_apps=(${APPS})
           else
             for app in ${APPS}; do
@@ -78,5 +91,5 @@ jobs:
     uses: ./.github/workflows/build-app.yaml
     with:
       app: ${{ matrix.app }}
-      publish: ${{ github.event_name == 'push' }}
+      publish: ${{ (github.event_name == 'push' && github.ref_name == 'main') || (github.event_name == 'workflow_dispatch' && inputs.publish) }}
     secrets: inherit
