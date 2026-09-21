@@ -61,6 +61,7 @@ jobs:
   build:
     name: Build ${{ matrix.arch }} image
     needs: prepare
+    if: ${{ needs.prepare.outputs.build_matrix != '[]' && needs.prepare.outputs.build_matrix != '' }}
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
