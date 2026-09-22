@@ -10,6 +10,8 @@ on:
   push:
     branches:
       - main
+  schedule:
+    - cron: "0 2 * * *"
   workflow_dispatch:
     inputs:
       publish:
@@ -55,8 +57,8 @@ jobs:
           # If specific app is provided on manual trigger:
           if [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ inputs.app }}" ]]; then
             changed_apps=("${{ inputs.app }}")
-          # On general manual trigger or if workflow files changed, build all apps:
-          elif [[ "${{ github.event_name }}" == "workflow_dispatch" || "${CHANGED_FILES}" =~ \.github/workflows/(builder|build-app)\.yaml ]]; then
+          # On general manual trigger, nightly schedule, or if workflow files changed, build all apps:
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" || "${{ github.event_name }}" == "schedule" || "${CHANGED_FILES}" =~ \.github/workflows/(builder|build-app)\.yaml ]]; then
             changed_apps=(${APPS})
           else
             for app in ${APPS}; do
@@ -91,5 +93,5 @@ jobs:
     uses: ./.github/workflows/build-app.yaml
     with:
       app: ${{ matrix.app }}
-      publish: ${{ (github.event_name == 'push' && github.ref_name == 'main') || (github.event_name == 'workflow_dispatch' && inputs.publish) }}
+      publish: ${{ (github.event_name == 'push' && github.ref_name == 'main') || (github.event_name == 'workflow_dispatch' && inputs.publish) || github.event_name == 'schedule' }}
     secrets: inherit
