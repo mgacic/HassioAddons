@@ -59,7 +59,7 @@ gosu influxdb3 influxdb3 serve \
 INFLUX_PID=$!
 
 # Wait for InfluxDB 3 to be ready
-until curl -s -f http://127.0.0.1:8181/health >/dev/null 2>&1 || curl -s -f http://127.0.0.1:8181/ping >/dev/null 2>&1; do
+until curl -s -f -H "Authorization: Bearer $TOKEN" http://127.0.0.1:8181/health >/dev/null 2>&1 || curl -s -f -H "Authorization: Bearer $TOKEN" http://127.0.0.1:8181/ping >/dev/null 2>&1; do
     sleep 1
 done
 
