@@ -17,5 +17,9 @@ ports:
   8080/tcp: null
 ports_description:
   8080/tcp: "InfluxDB 3 Explorer Web UI"
-options: {}
-schema: {}
+options:
+  influxdb_url: "http://<your-home-assistant-ip>:8181"
+  admin_token: ""
+schema:
+  influxdb_url: str
+  admin_token: password

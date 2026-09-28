@@ -2,8 +2,18 @@ ARG EXPLORER_IMAGE=influxdata/influxdb3-ui:latest
 
 FROM ${EXPLORER_IMAGE}
 
-# We simply wrap the official image so it works as an add-on.
-# No need to copy a custom rootfs, we'll just use its native entrypoint.
+# Switch to root to install jq and copy the run script
+USER root
+
+RUN apk update && apk add --no-cache jq
+
+COPY run.sh /run.sh
+RUN chmod +x /run.sh
+
+# Switch back to the original user
+USER influxui
+
+ENTRYPOINT ["/run.sh"]
 
 LABEL \
     org.opencontainers.image.title="InfluxDB 3 Explorer" \
