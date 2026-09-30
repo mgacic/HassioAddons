@@ -5,13 +5,12 @@ FROM ${EXPLORER_IMAGE}
 # Switch to root to install jq and copy the run script
 USER root
 
-RUN apk update && apk add --no-cache jq
+RUN apk update && apk add --no-cache jq su-exec
 
 COPY run.sh /run.sh
 RUN chmod +x /run.sh
 
-# Switch back to the original user
-USER influxui
+
 
 ENTRYPOINT ["/run.sh"]
 

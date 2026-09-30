@@ -13,4 +13,4 @@ fi
 # Pass any extra arguments or start the UI
 # The official entrypoint is ./entrypoint.sh inside /app-root
 cd /app-root
-exec ./entrypoint.sh --mode=admin
+exec su-exec influxui ./entrypoint.sh --mode=admin
