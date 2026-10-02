@@ -1,0 +1,24 @@
+name: "InfluxDB 3 Explorer"
+version: "1.0.1"
+slug: "influxdb3_explorer"
+description: "Official web UI for InfluxDB 3 Core"
+url: "https://github.com/mgacic/HassioAddons/tree/main/InfluxDB3_Explorer"
+image: "ghcr.io/mgacic/influxdb3_explorer"
+arch:
+  - aarch64
+  - amd64
+init: false
+ingress: true
+ingress_port: 8080
+ingress_stream: true
+panel_icon: mdi:chart-box
+ports:
+  8080/tcp: null
+ports_description:
+  8080/tcp: "InfluxDB 3 Explorer Web UI"
+options:
+  influxdb_url: "http://<your-home-assistant-ip>:8181"
+  admin_token: ""
+schema:
+  influxdb_url: str
+  admin_token: password

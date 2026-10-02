@@ -1,0 +1,26 @@
+name: "InfluxDB 3"
+version: "1.0.0"
+slug: "influxdb3"
+description: "InfluxDB 3 Core time-series database"
+url: "https://github.com/mgacic/HassioAddons/InfluxDB3"
+image: "ghcr.io/mgacic/influxdb3"
+arch:
+  - aarch64
+  - amd64
+startup: services
+init: false
+ports:
+  8181/tcp: 8181
+ports_description:
+  8181/tcp: "InfluxDB 3 HTTP API and Arrow Flight"
+options:
+  databases:
+    - "homeassistant"
+  admin_token: "apiv3_homeassistant_admin_token_secret_12345"
+  node_id: "node0"
+  log_filter: "info"
+schema:
+  databases: [str]
+  admin_token: password
+  node_id: str
+  log_filter: str
