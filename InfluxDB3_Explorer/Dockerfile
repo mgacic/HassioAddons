@@ -5,7 +5,7 @@ FROM ${EXPLORER_IMAGE}
 # Switch to root to install jq and copy the run script
 USER root
 
-RUN apk update && apk add --no-cache jq su-exec
+RUN apt-get update && apt-get install -y jq
 
 COPY run.sh /run.sh
 RUN chmod +x /run.sh
